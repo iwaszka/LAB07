@@ -24,41 +24,58 @@ evals<-read.csv("data/evals.csv", row.names=1)
 1.  Visualize the distribution of `score` in the dataframe `evals`.
 
 ```{r viz-score}
-# add code here
+evals %>% summarize(mean(score), median(score), sd(score), IQR(score))
+ggplot(data = evals, mapping = aes(x = score)) +
+  geom_histogram()
+
 ```
 
-*Add your other details and narratives here.*
+Left skewed data, most students rate courses quite highly, was expecting more critical responses
 
 2.  Visualize and describe the relationship between `score` and `bty_avg` using `geom_point()` to represent the data. 
 
 ```{r scatterplot}
-# add code here
+ggplot(data = evals, mapping = aes(x = score, y = bty_avg)) + 
+  geom_point()
+
+ggplot(data = evals, mapping = aes(x = score, y = bty_avg)) + 
+  geom_jitter()
 ```
 
-*Add your narrative and other details here.*
+jitter adds a small amount of random variation to the location of each point, and is a useful way of handling overplotting caused by discreteness in smaller datasets. The points were initially spread out without factoring in the density
+
+
 
 # Exercise 2: Simple Linear regression with a numerical predictor
 
 1. Fit a linear model called `score_bty_fit` to predict average professor evaluation `score` from average beauty rating (`bty_avg`). Print the regression output using `tidy()`.
 
-```{r fit-score_bty_fit, eval = FALSE}
+```{r fit-score_bty_fit}
 # remove eval = FALSE from the code chunk options after filling in the blanks
 score_bty_fit <- linear_reg() %>%
   set_engine("lm") %>%
-  fit(___ ~ ___, data = ___)
+  fit(score ~ bty_avg, data = evals) %>%
+  tidy()
 ```
 
-```{r tidy-score_bty_fit, eval = FALSE}
+```{r tidy-score_bty_fit}
 # remove eval = FALSE from the code chunk options after filling in the blanks
-tidy(___)
+print(score_bty_fit)
 ```
 
-*Add your linear model here. Don't worry too much about notation, you can use things like score-hat.*
+y = 0.06663704x + 3.88033795,
+y = 0.0666x + 3.88 (3 s.f.)
 
 2. Plot the data again using `geom_jitter()`, and add the regression line.
 
 ```{r viz-score_bty_fit,eval=FALSE}
 # add your plot here. Hint, you can add the regression line using geom_smooth()
+ggplot(data = evals, mapping = aes(x = score, y = bty_avg)) + 
+  geom_jitter() +
+  geom_smooth(method = "lm", formula = y ~ x)
+
+glance(score_bty_fit)
+  
 ```
 
 3. Interpret the slope of the linear model in context of the data.
