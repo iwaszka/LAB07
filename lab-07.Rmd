@@ -74,8 +74,6 @@ ggplot(data = evals, mapping = aes(x = score, y = bty_avg)) +
   geom_jitter() +
   geom_smooth(method = "lm", formula = y ~ x)
 
-glance(score_bty_fit)
-  
 ```
 
 3. Interpret the slope of the linear model in context of the data.
@@ -88,9 +86,16 @@ glance(score_bty_fit)
 
 5. Determine the $R^2$ of the model and interpret it in the context of the data.
 
-```{r R2, eval = FALSE}
+```{r R2}
 # remove eval = FALSE from the code chunk options after filling in the blanks
-glance(___)$___
+score_bty_fit <- linear_reg() %>%
+  set_engine("lm") %>%
+  fit(score ~ bty_avg, data = evals)
+model_summary <- glance(score_bty_fit) %>%
+  select("r.squared") %>%
+  print()
+
+glance(score_bty_fit)$r.squared
 ```
 
 *Add your interpretation here*
@@ -100,8 +105,12 @@ glance(___)$___
 ```{r viz-score_bty_fit-diagnostic, eval = FALSE}
 # remove eval = FALSE from the code chunk options after filling in the blanks
 score_bty_aug <- augment(score_bty_fit$fit)
+names(score_bty_aug)
 
-ggplot(___) + ...
+ggplot(data = score_bty_aug, mapping = aes(x = .resid, y = .fitted)) + 
+  geom_jitter() +
+  geom_hline(yintercept = 0, linetype = "dashed")
+  
 ```
 
 # Exercise 3: Simple Linear regression with a categorical predictor
